@@ -16,6 +16,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import com.example.app.ui.theme.MaterialTheme
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.graphics.Color
 
 
 @OptIn (ExperimentalMaterial3Api::class)
@@ -28,7 +31,12 @@ fun TopBar(
     onMenu: (() -> Unit)? = null ,
     centered: Boolean = false
     )
-{
+{     val colors = TopAppBarDefaults.topAppBarColors(
+       containerColor = Color(0xFF3F51B5), // morado ejemplo
+        titleContentColor = Color.White,    // color del título
+        navigationIconContentColor = Color.White, // iconos
+        actionIconContentColor = Color.White
+)
 
         TopAppBar(
             title = { Text(text = title) },
@@ -56,7 +64,8 @@ fun TopBar(
                         )
                     }
                 }
-            }
+            },
+            colors = colors
         )
     }
 
@@ -67,7 +76,7 @@ fun TopBarPreview() {
     MaterialTheme {
         Surface {
             TopBar(
-                title = "Pantalla Principal",
+                title = "TextReader",
                 showBack = true,
                 onBack = {},
                 onSettings = {},
