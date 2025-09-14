@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import com.example.app.ui.theme.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
@@ -32,7 +31,7 @@ fun TopBar(
     centered: Boolean = false
     )
 {     val colors = TopAppBarDefaults.topAppBarColors(
-       containerColor = Color(0xFF3F51B5), // morado ejemplo
+       containerColor = Color(0xFF204CD7), // morado ejemplo
         titleContentColor = Color.White,    // color del título
         navigationIconContentColor = Color.White, // iconos
         actionIconContentColor = Color.White

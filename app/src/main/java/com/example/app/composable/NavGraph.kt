@@ -5,9 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app.navigation.Routes
-
 import com.example.app.interfaces.*
-
 
 @Composable
 fun AppNav() {
@@ -35,15 +33,32 @@ fun AppNav() {
         }
 
         composable(Routes.REGISTER) {
-            RegisterApp(onBack = { navController.popBackStack()}, onRegistered ={navController.navigate(Routes.LOGIN)})
+            RegisterApp(
+                onBack = { navController.popBackStack() },
+                onRegistered = { navController.navigate(Routes.LOGIN) }
+            )
         }
 
         composable(Routes.FORGOT) {
-            ForgotPasswordScreen (onBack = { navController.popBackStack() })
+            ForgotPasswordScreen(onBack = { navController.popBackStack() })
         }
+
         composable(Routes.HOME) {
-            HomeApp(onLogout = { navController.navigate(Routes.LOGIN) }
+            HomeApp(
+                onLogout = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.HOME) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onSettings = {
+                    navController.navigate(Routes.SETTINGS) { launchSingleTop = true }
+                }
             )
+        }
+
+        composable(Routes.SETTINGS) {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

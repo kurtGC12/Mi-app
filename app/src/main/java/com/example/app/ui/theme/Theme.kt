@@ -9,50 +9,49 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+
+import com.example.app.prefs.AppPrefs
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimarioOscuro,
     secondary = SecundarioOscuro,
-    tertiary = TerciarioOscuro
+    tertiary = TerciarioOscuro,
+
+    background = Color.Black,
+    surface = Color.Black,
+    onBackground = Color.White,
+    onSurface = Color.White
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = VerdeClaro,
-    secondary = VerdeOscuro,
-    tertiary = VerdeClarito
 
-        /* Other de fault colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val LightColorScheme = lightColorScheme(
+    primary = PrimarioClaro,
+    secondary = SecundarioClaro,
+    tertiary = TerciarioClaro
 )
 
 @Composable
 fun MaterialTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val useDark = AppPrefs.darkMode || darkTheme
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (useDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DarkColorScheme
+        useDark -> DarkColorScheme
         else -> LightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = scaledTypography(AppPrefs.fontScale),
         content = content
     )
 }

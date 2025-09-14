@@ -1,6 +1,7 @@
 package com.example.app.interfaces
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -10,11 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.app.ui.theme.VerdeOscuro
+import com.example.app.R
+import com.example.app.ui.theme.PrimarioClaro
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,8 +30,8 @@ fun ForgotPasswordScreen(
 
     Scaffold(
         topBar = { TopBar(
-            title = "Registro de cuenta",
-            showBack = false,
+            title = "Recuperar Contraseña",
+            showBack = true,
             onBack = { onBack()},
             centered = true,
 
@@ -43,6 +46,15 @@ fun ForgotPasswordScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.forgot_password),
+                contentDescription = "Imagen de recuperar contraseña",
+                modifier = Modifier
+                    .size(300.dp)
+                    .padding(bottom = 24.dp)
+            )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -77,9 +89,11 @@ fun ForgotPasswordScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
+
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = VerdeOscuro, // Fondo
-                    contentColor = Color.White        // Texto
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+
                 )
             ) {
                 Text("Recuperar Contraseña")
@@ -93,8 +107,7 @@ fun ForgotPasswordScreen(
                     color = if (message.startsWith("Se han")) Color(0xFF4CAF50) else Color.Red
                 )
             }
-        }
-    }
+        } }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

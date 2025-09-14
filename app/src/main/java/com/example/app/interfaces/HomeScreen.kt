@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.example.app.interfaces.TopBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
@@ -21,9 +20,10 @@ import androidx.compose.material3.Surface
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeApp(onLogout: () -> Unit) {
+fun HomeApp(onLogout: () -> Unit,
+            onSettings: () -> Unit) {
     Scaffold(
-        topBar = { TopBar(title = "Principal", showBack = false) }
+        topBar = { TopBar(title = "Principal", showBack = false , onSettings = onSettings) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -50,7 +50,7 @@ fun HomeApp(onLogout: () -> Unit) {
 fun HomeAppPreview() {
     MaterialTheme {
         Surface {
-            HomeApp(onLogout = { /* noop */ })
+            HomeApp(onLogout = { }, onSettings = { })
         }
     }
 }

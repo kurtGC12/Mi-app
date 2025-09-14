@@ -30,9 +30,9 @@ import com.example.app.ui.theme.MaterialTheme
 import com.example.app.ui.theme.MaterialTheme
 import com.example.app.ui.theme.*
 
-import com.example.app.ui.theme.VerdeClarito
-import com.example.app.ui.theme.VerdeClaro
-import com.example.app.ui.theme.VerdeOscuro
+import com.example.app.ui.theme.PrimarioClaro
+import com.example.app.ui.theme.SecundarioClaro
+import com.example.app.ui.theme.TerciarioClaro
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +57,6 @@ fun LoginApp(
             modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Imagen superior (cambia por tu recurso)
             Spacer(Modifier.height(100.dp))
             val composition by rememberLottieComposition(
                 LottieCompositionSpec.RawRes(R.raw.ee_gs1))
@@ -121,8 +120,8 @@ fun LoginApp(
                         errors = res.errors }
                 },
                 colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdeOscuro,       // Fondo
-                        contentColor = Color.White       // Texto
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 modifier = Modifier.fillMaxWidth().height(52.dp)
             ){
@@ -133,9 +132,9 @@ fun LoginApp(
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                TextButton(onClick =( onGoForgot), colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdeClaro,   // Fondo
-                        contentColor = Color.White       // Texto
+                TextButton(onClick =( onGoForgot),colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                     ),
                     modifier = Modifier.weight(1f)
                 ) {
@@ -143,8 +142,8 @@ fun LoginApp(
                 }
                 TextButton(onClick = (onGoRegister),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = TerciarioOscuro,       // Fondo
-                        contentColor = Color.White       // Texto
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
                     ), modifier = Modifier.weight(1f)
                 ) {
                     Text("Crear cuenta")
