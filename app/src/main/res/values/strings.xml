@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">App</string>
+    <string name="settings_language">Idioma</string>
+    <string name="lang_spanish">Español</string>
+    <string name="lang_english">Inglés</string>
+    <string name="lang_portuguese">Portugués</string>
 </resources>

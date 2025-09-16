@@ -1,27 +1,35 @@
 package com.example.app.interfaces
 
-
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app.prefs.AppPrefs
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.app.prefs.LanguagePrefs
+import kotlinx.coroutines.launch
 import com.example.app.ui.theme.MaterialTheme
-import com.example.app.ui.theme.PrimarioClaro
-import com.example.app.ui.theme.SecundarioClaro
-
+import com.example.app.untils.LocalHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    // Preferencias existentes
     var dark by remember { mutableStateOf(AppPrefs.darkMode) }
     var scale by remember { mutableStateOf(AppPrefs.fontScale) }
+
+    // Idioma actual desde DataStore
+    val currentLang by LanguagePrefs.flowLanguage(context).collectAsState(initial = "es")
+    var selectedLang by remember(currentLang) { mutableStateOf(currentLang) }
 
     Scaffold(
         topBar = {
@@ -29,7 +37,7 @@ fun SettingsScreen(
                 title = "Configuración",
                 showBack = true,
                 onBack = onBack,
-                centered = true
+                isDarkMode = dark,
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -41,9 +49,8 @@ fun SettingsScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Modo nocturno
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+            //Modo oscuro
+            Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -51,23 +58,23 @@ fun SettingsScreen(
                     Text("Modo nocturno", style = MaterialTheme.typography.titleLarge)
                     Text(
                         "Mejora legibilidad para baja visión y ambientes con poca luz.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                        style = MaterialTheme.typography.bodyMedium)
                 }
-                Switch(checked = dark, onCheckedChange = {
-                    dark = it
-                    AppPrefs.darkMode = it
-                })
+                Switch(
+                    checked = dark,
+                    onCheckedChange = {
+                        dark = it
+                        AppPrefs.darkMode = it }
+                )
             }
 
-            // Tamaño de fuente
+            //Tamaño de fuente
             Column {
                 Text("Tamaño de fuente", style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(
                         onClick = {
                             scale = (scale - 0.05f).coerceIn(0.85f, 1.40f)
@@ -75,13 +82,10 @@ fun SettingsScreen(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-
-                        )
+                            contentColor = MaterialTheme.colorScheme.onSecondary,)
                     ) { Text("a-") }
 
                     Text("${(scale * 100).toInt()}%", style = MaterialTheme.typography.titleLarge)
-
                     Button(
                         onClick = {
                             scale = (scale + 0.05f).coerceIn(0.85f, 1.40f)
@@ -102,7 +106,9 @@ fun SettingsScreen(
                 Spacer(Modifier.height(8.dp))
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         Text("Vista previa", style = MaterialTheme.typography.titleLarge)
@@ -112,16 +118,78 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(Modifier.height(4.dp))
-                        Text(
-                            "Ajusta a- / A+ para ver el efecto hasta que te resulte cómodo.",
+                        Text("Ajusta a- / A+ para ver el efecto hasta que te resulte cómodo.",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
             }
+
+            // Idioma
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Idioma de la aplicación", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    "Cambia el idioma de toda la app al instante.", style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(Modifier.height(8.dp))
+
+                LanguageRow(
+                    selected = selectedLang == "es",
+                    label = "Español",
+                    onClick = {
+                        selectedLang = "es"
+                        scope.launch { LanguagePrefs.setLanguage(context, "es")
+                            LocalHelper.applyLanguage("es")
+                        }
+                    }
+                )
+                LanguageRow(
+                    selected = selectedLang == "en",
+                    label = "English",
+                    onClick = {
+                        selectedLang = "en"
+                        scope.launch {
+                            LanguagePrefs.setLanguage(context, "en")
+                            LocalHelper.applyLanguage("en")
+                        }
+                    }
+                )
+                LanguageRow(
+                    selected = selectedLang == "pt",
+                    label = "Português",
+                    onClick = {
+                        selectedLang = "pt"
+                        scope.launch {
+                            LanguagePrefs.setLanguage(context, "pt")
+                            LocalHelper.applyLanguage("pt")
+                        }
+                    }
+                )
+            }
         }
     }
 }
+
+@Composable
+private fun LanguageRow(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Spacer(Modifier.width(8.dp))
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+/* -------------------- Previews -------------------- */
 
 @Preview(
     name = "Settings Preview",

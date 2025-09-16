@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app.R
-import com.example.app.ui.theme.PrimarioClaro
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +33,6 @@ fun ForgotPasswordScreen(
             title = "Recuperar Contraseña",
             showBack = true,
             onBack = { onBack()},
-            centered = true,
 
             )
         },

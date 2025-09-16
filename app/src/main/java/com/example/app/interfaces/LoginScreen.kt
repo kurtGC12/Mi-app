@@ -2,8 +2,9 @@ package com.example.app.interfaces
 
 
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -14,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,17 +22,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lint.kotlin.metadata.Visibility
 import com.example.app.untils.Registros
 import com.airbnb.lottie.compose.*
 import com.example.app.R
 import com.example.app.ui.theme.MaterialTheme
-import com.example.app.ui.theme.MaterialTheme
-import com.example.app.ui.theme.*
 
-import com.example.app.ui.theme.PrimarioClaro
-import com.example.app.ui.theme.SecundarioClaro
-import com.example.app.ui.theme.TerciarioClaro
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,14 +42,16 @@ fun LoginApp(
     var showPassword by rememberSaveable { mutableStateOf(false) }
     var errors by remember { mutableStateOf<List<String>>(emptyList()) }
 
+
     Scaffold(
         topBar = { TopBar(title = "Iniciar sesión",
             showBack = false , onSettings = {},
-            centered = true
+
+
             ) }
     ) { padding ->
         Column(
-            modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
+            modifier = Modifier.padding(padding).padding(30.dp).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(100.dp))
@@ -148,7 +145,45 @@ fun LoginApp(
                 ) {
                     Text("Crear cuenta")
                 }
+
             }
+            Spacer(Modifier.height(20.dp))
+
+            GoogleSignInButton {
+                // Por ahora solo un print:
+                println("Botón Google para iniciar sesion")
+            }
+        }
+    }
+}
+
+@Composable
+fun GoogleSignInButton(
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().height(52.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.White,
+            contentColor = Color.Black
+        )
+
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.google),
+            contentDescription = "Google",
+            modifier = Modifier.size(20.dp),
+                    tint = Color.Unspecified
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            Spacer(Modifier.width(8.dp))
+            Text("Iniciar con Google")
         }
     }
 }

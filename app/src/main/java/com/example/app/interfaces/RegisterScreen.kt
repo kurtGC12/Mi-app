@@ -1,13 +1,11 @@
 package com.example.app.interfaces
 
 
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -54,7 +52,8 @@ fun RegisterApp(
                 title = "Registro de cuenta",
                 showBack = true,
                 onBack = onBack,
-                centered = true,
+
+
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
