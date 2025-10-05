@@ -1,5 +1,6 @@
 package com.example.app.untils
 
+
 import android.util.Patterns
 
 
@@ -8,7 +9,7 @@ data class ValidationResult(
     val errors: List<String> = emptyList()
 )
 
-object Registros {
+object RegistrosHelper {
     fun validarRegistro(nombre: String, correo: String, password: String, terminos: Boolean): ValidationResult {
 
         val errores = mutableListOf<String>()
@@ -32,9 +33,9 @@ object Registros {
         if (!terminos) {
             errores.add("Debes aceptar los términos y condiciones")
         }
-     return if (errores.isEmpty()) ValidationResult(true) else ValidationResult(false ,errores)
+        return if (errores.isEmpty()) ValidationResult(true) else ValidationResult(false ,errores)
     }
-val registros = mutableListOf<Map<String, Any>>()
+    val registros = mutableListOf<Map<String, Any>>()
 
     fun guardarRegistro(nombre: String, correo: String, password: String, terminos: Boolean): ValidationResult {
         val validacion = validarRegistro("nombre", "correo", "password", terminos)
@@ -66,9 +67,5 @@ val registros = mutableListOf<Map<String, Any>>()
         } else {
             ValidationResult(false, listOf("Correo o contraseña incorrectos"))
         }
+    }
 }
-}
-
-
-
-

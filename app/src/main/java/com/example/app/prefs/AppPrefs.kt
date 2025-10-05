@@ -9,3 +9,4 @@ object AppPrefs {
     var darkMode by mutableStateOf(false)
     var fontScale by mutableStateOf(1.0f)
 }
+

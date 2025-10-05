@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.app.untils.Registros
+import com.example.app.untils.RegistrosHelper
 import com.airbnb.lottie.compose.*
 import com.example.app.R
 import com.example.app.ui.theme.MaterialTheme
@@ -110,7 +110,7 @@ fun LoginApp(
 
             Button(
                 onClick = {
-                    val res = Registros.autenticar(correo.trim(), password)
+                    val res = RegistrosHelper.autenticar(correo.trim(), password)
                     if (res.success) {
                         errors = emptyList()
                         onLoginSuccess() } else {

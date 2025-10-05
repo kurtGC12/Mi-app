@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app.ui.theme.*
-import com.example.app.untils.Registros
+import com.example.app.untils.RegistrosHelper
 import kotlinx.coroutines.launch
 
 
@@ -195,7 +195,7 @@ fun RegisterApp(
                             if (pass2 != pass) extra.add("Las contraseñas no coinciden")
                             if (!aceptaTerminos) extra.add("Debes aceptar los Términos y Condiciones")
 
-                            val valid = Registros.validarRegistro(
+                            val valid = RegistrosHelper.validarRegistro(
                                 nombre = nombre.trim(),
                                 correo = correo.trim(),
                                 password = pass,

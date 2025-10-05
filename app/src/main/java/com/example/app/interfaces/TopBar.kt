@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Surface
@@ -24,9 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 
-
-@SuppressLint("SuspiciousIndentation")
-@OptIn (ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     title: String,
@@ -36,13 +35,13 @@ fun TopBar(
     onMenu: (() -> Unit)? = null,
     isDarkMode: Boolean = false,
     lightColors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
-        containerColor = Color(0xFF2553C7), // color modo claro
+        containerColor = Color(0xFF2553C7),
         titleContentColor = Color.White,
         navigationIconContentColor = Color.White,
         actionIconContentColor = Color.White
     ),
     darkColors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
-        containerColor =  Color(0xFF2553C7),    // color modo oscuro
+        containerColor = Color(0xFF2553C7),
         titleContentColor = Color(0xFFFCFCFC),
         navigationIconContentColor = Color(0xFFF8F8F8),
         actionIconContentColor = Color(0xFFFFFFFF)
@@ -50,37 +49,33 @@ fun TopBar(
 ) {
     val colors = if (isDarkMode) darkColors else lightColors
 
-        TopAppBar(
-            title = { Text(text = title) },
-            navigationIcon = {
-                if (showBack && onBack != null) {
+    TopAppBar(
+        title = { Text(text = title) },
+        // Prioridad: si hay back, muestra back; si no, muestra menú si existe callback
+        navigationIcon = {
+            when {
+                showBack && onBack != null -> {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack, contentDescription = "Atrás"
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
                     }
                 }
-            },
-            actions = {
-                if (onSettings != null) {
-                    IconButton(onClick = onSettings) {
-                        Icon(
-                            imageVector = Icons.Default.Settings, contentDescription = "Ajustes"
-                        )
-                    }
-                }
-                if (onMenu != null) {
+                !showBack && onMenu != null -> {
                     IconButton(onClick = onMenu) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert, contentDescription = "Más opciones"
-                        )
+                        Icon(Icons.Default.Menu, contentDescription = "Menú")
                     }
                 }
-            },
-            colors = colors
-        )
-    }
-
+            }
+        },
+        actions = {
+            if (onSettings != null) {
+                IconButton(onClick = onSettings) {
+                    Icon(Icons.Default.Settings, contentDescription = "Ajustes")
+                }
+            }
+        },
+        colors = colors
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)

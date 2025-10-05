@@ -11,21 +11,22 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-
 import com.example.app.prefs.AppPrefs
+import androidx.compose.material3.MaterialTheme as M3Theme
 
+
+
+//Colores de modo oscuro
 private val DarkColorScheme = darkColorScheme(
     primary = PrimarioOscuro,
     secondary = SecundarioOscuro,
     tertiary = TerciarioOscuro,
-
     background = Color.Black,
     surface = Color.Black,
     onBackground = Color.White,
     onSurface = Color.White
 )
-
-
+// Colores de modo claro
 private val LightColorScheme = lightColorScheme(
     primary = PrimarioClaro,
     secondary = SecundarioClaro,
@@ -49,7 +50,7 @@ fun MaterialTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
+    M3Theme(
         colorScheme = colorScheme,
         typography = scaledTypography(AppPrefs.fontScale),
         content = content

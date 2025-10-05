@@ -10,10 +10,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app.prefs.AppPrefs
+import com.example.app.prefs.AppearancePrefs
 import com.example.app.prefs.LanguagePrefs
 import kotlinx.coroutines.launch
 import com.example.app.ui.theme.MaterialTheme
 import com.example.app.untils.LocalHelper
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,9 +64,9 @@ fun SettingsScreen(
                 }
                 Switch(
                     checked = dark,
-                    onCheckedChange = {
-                        dark = it
-                        AppPrefs.darkMode = it }
+                    onCheckedChange = { enabled -> dark = enabled
+                        AppPrefs.darkMode = enabled
+                        scope.launch { AppearancePrefs.setDarkMode(context, enabled) }}
                 )
             }
 
@@ -79,6 +81,7 @@ fun SettingsScreen(
                         onClick = {
                             scale = (scale - 0.05f).coerceIn(0.85f, 1.40f)
                             AppPrefs.fontScale = scale
+                            scope.launch { AppearancePrefs.setFontScale(context, scale) }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -90,6 +93,7 @@ fun SettingsScreen(
                         onClick = {
                             scale = (scale + 0.05f).coerceIn(0.85f, 1.40f)
                             AppPrefs.fontScale = scale
+                            scope.launch { AppearancePrefs.setFontScale(context, scale) }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -100,6 +104,7 @@ fun SettingsScreen(
                     TextButton(onClick = {
                         scale = 1.0f
                         AppPrefs.fontScale = 1.0f
+                        scope.launch { AppearancePrefs.setFontScale(context, 1.0f) }
                     }) { Text("Restablecer") }
                 }
 
