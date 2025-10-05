@@ -73,7 +73,7 @@ fun SpeechRecognitionApp() {
 @Composable
 fun PreviewApp () {
     MaterialTheme {
-        LoginApp(onGoRegister = {}, onGoForgot = {}, onLoginSuccess = {})
+        LoginApp(onGoRegister = {}, onGoForgot = {}, onLoginSuccess = {}, onOpenSettings={})
 
     }
 

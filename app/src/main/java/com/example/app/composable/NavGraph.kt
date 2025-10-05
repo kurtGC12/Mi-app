@@ -17,18 +17,14 @@ fun AppNav() {
     ) {
         composable(Routes.LOGIN) {
             LoginApp(
-                onGoRegister = {
-                    navController.navigate(Routes.REGISTER) { launchSingleTop = true }
-                },
-                onGoForgot = {
-                    navController.navigate(Routes.FORGOT) { launchSingleTop = true }
-                },
+                onGoRegister = { navController.navigate(Routes.REGISTER) { launchSingleTop = true } },
+                onGoForgot = { navController.navigate(Routes.FORGOT) { launchSingleTop = true } },
                 onLoginSuccess = {
                     navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                        launchSingleTop = true
+                        popUpTo(Routes.LOGIN) { inclusive = true }; launchSingleTop = true
                     }
-                }
+                },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } }
             )
         }
 

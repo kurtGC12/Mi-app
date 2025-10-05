@@ -47,7 +47,7 @@ fun ForgotPasswordScreen(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.forgot_password),
+                painter = painterResource(id = R.drawable.forgot),
                 contentDescription = "Imagen de recuperar contraseña",
                 modifier = Modifier
                     .size(300.dp)

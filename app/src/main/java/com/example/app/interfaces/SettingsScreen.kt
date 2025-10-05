@@ -194,7 +194,6 @@ private fun LanguageRow(
     }
 }
 
-/* -------------------- Previews -------------------- */
 
 @Preview(
     name = "Settings Preview",

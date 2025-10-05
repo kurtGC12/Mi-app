@@ -8,10 +8,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/micro"
+        android:icon="@drawable/ic_launcher_background"
         android:label="@string/app_name"
         android:localeConfig="@xml/idioma_conf"
-        android:roundIcon="@drawable/micro"
+        android:roundIcon="@drawable/ic_launcher_background"
         android:supportsRtl="true"
         android:theme="@style/Theme.App" >
 

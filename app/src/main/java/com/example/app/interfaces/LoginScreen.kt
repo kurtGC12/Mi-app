@@ -35,7 +35,8 @@ import com.example.app.ui.theme.MaterialTheme
 fun LoginApp(
     onGoRegister: () -> Unit,
     onGoForgot: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     var correo by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -45,7 +46,7 @@ fun LoginApp(
 
     Scaffold(
         topBar = { TopBar(title = "Iniciar sesión",
-            showBack = false , onSettings = {},
+            showBack = false , onSettings =  onOpenSettings,
 
 
             ) }
@@ -195,7 +196,8 @@ fun LoginPreview() {
         LoginApp(
             onGoRegister = {},
             onGoForgot = {},
-            onLoginSuccess = {}
+            onLoginSuccess = {},
+            onOpenSettings = {}
         )
     }
 }
