@@ -6,14 +6,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/** Escala un valor en sp con el factor de fuente elegido */
+
 private fun scaled(baseSp: Int, scale: Float) = (baseSp * scale).sp
-    /** Tipografía escalable según preferencia del usuario */
     fun scaledTypography(scale: Float): Typography {
         val safe = scale.coerceIn(0.85f, 1.40f)
 
         return Typography(
-            // Usados en tus pantallas
+
             bodyLarge = TextStyle(
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight.Normal,

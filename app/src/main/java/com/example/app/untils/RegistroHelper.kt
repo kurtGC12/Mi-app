@@ -1,8 +1,9 @@
 package com.example.app.untils
 
-
+import android.content.Context
 import android.util.Patterns
-
+import com.example.app.data.User
+import com.example.app.data.UserDao
 
 data class ValidationResult(
     val success: Boolean,
@@ -10,62 +11,82 @@ data class ValidationResult(
 )
 
 object RegistrosHelper {
-    fun validarRegistro(nombre: String, correo: String, password: String, terminos: Boolean): ValidationResult {
 
+
+    fun validarRegistro(
+        context: Context,
+        nombre: String,
+        correo: String,
+        password: String,
+        terminos: Boolean
+    ): ValidationResult {
         val errores = mutableListOf<String>()
-        if (nombre.isBlank()) {
-            errores.add("El nombre no puede estar vacío")
-        }
+
+        if (nombre.isBlank()) errores.add("El nombre no puede estar vacío")
+
         if (correo.isBlank()) {
             errores.add("El correo no puede estar vacío")
         } else if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
             errores.add("El correo no tiene un formato válido")
-        } else if (registros.any { it["correo"] == correo }) {
+        } else if (emailExiste(context, correo)) {
             errores.add("El correo ya está registrado")
         }
 
         if (password.isBlank()) {
             errores.add("La contraseña no puede estar vacía")
-        }
-        else if ( password.length < 6 ) {
+        } else if (password.length < 6) {
             errores.add("La contraseña debe tener al menos 6 caracteres")
         }
-        if (!terminos) {
-            errores.add("Debes aceptar los términos y condiciones")
-        }
-        return if (errores.isEmpty()) ValidationResult(true) else ValidationResult(false ,errores)
-    }
-    val registros = mutableListOf<Map<String, Any>>()
 
-    fun guardarRegistro(nombre: String, correo: String, password: String, terminos: Boolean): ValidationResult {
-        val validacion = validarRegistro("nombre", "correo", "password", terminos)
+        if (!terminos) errores.add("Debes aceptar los términos y condiciones")
+
+        return if (errores.isEmpty()) ValidationResult(true) else ValidationResult(false, errores)
+    }
+
+
+    fun guardarRegistro(
+        context: Context,
+        nombre: String,
+        correo: String,
+        password: String,
+        terminos: Boolean
+    ): ValidationResult {
+        val validacion = validarRegistro(context, nombre, correo, password, terminos)
         if (!validacion.success) return validacion
 
-        val nuevoRegistro = mapOf(
-            "nombre" to nombre,
-            "correo" to correo,
-            "password" to password,
-            "terminos" to terminos
+        val dao = UserDao(context)
+        val nuevoUsuario = User(
+            id = 0,
+            nombre = nombre,
+            correo = correo,
+            contrasena = password
         )
-        registros.add(nuevoRegistro)
 
-        return ValidationResult(success = true)
+        val ok = dao.insert(nuevoUsuario)
+        return if (ok) ValidationResult(true) else ValidationResult(false, listOf("Error al guardar en la base de datos"))
     }
-    fun autenticar(correo: String, password: String): ValidationResult {
+
+    fun autenticar(
+        context: Context,
+        correo: String,
+        password: String
+    ): ValidationResult {
         val errores = mutableListOf<String>()
         if (correo.isBlank()) errores.add("Ingrese su correo")
         if (password.isBlank()) errores.add("Ingrese su contraseña")
         if (errores.isNotEmpty()) return ValidationResult(false, errores)
 
-        val ok = registros.any {
-            (it["correo"] as? String)?.equals(correo.trim(), ignoreCase = true) == true &&
-                    (it["password"] as? String) == password
+        val dao = UserDao(context)
+        val encontrado = dao.getAll().any {
+            it.correo.equals(correo.trim(), ignoreCase = true) && it.contrasena == password
         }
 
-        return if (ok) {
-            ValidationResult(true)
-        } else {
-            ValidationResult(false, listOf("Correo o contraseña incorrectos"))
-        }
+        return if (encontrado) ValidationResult(true)
+        else ValidationResult(false, listOf("Correo o contraseña incorrectos"))
+    }
+
+    private fun emailExiste(context: Context, correo: String): Boolean {
+        val dao = UserDao(context)
+        return dao.getAll().any { it.correo.equals(correo.trim(), ignoreCase = true) }
     }
 }

@@ -15,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -28,13 +30,13 @@ import com.example.app.untils.RegistrosHelper
 import kotlinx.coroutines.launch
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterApp(
     onBack: () -> Unit,
     onRegistered: () -> Unit
 ) {
+    val context = LocalContext.current
     var nombre by rememberSaveable { mutableStateOf("") }
     var correo by rememberSaveable { mutableStateOf("") }
     var pass by rememberSaveable { mutableStateOf("") }
@@ -67,7 +69,6 @@ fun RegisterApp(
             contentAlignment = Alignment.Center
         ) {
 
-            // Card contenedora del registro
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,9 +100,7 @@ fun RegisterApp(
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Spacer(Modifier.height(12.dp))
-
                     OutlinedTextField(
                         value = correo,
                         onValueChange = { correo = it },
@@ -125,8 +124,7 @@ fun RegisterApp(
                         Text(if (showPass) "Ocultar" else "Mostrar",
                             modifier = Modifier
                                 .padding(end =8.dp)
-                                .clickable { showPass = !showPass }
-                            )
+                                .clickable { showPass = !showPass })
                         },
                         singleLine = true,
                         visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(),
@@ -168,14 +166,13 @@ fun RegisterApp(
                             Text("Acepto los ")
                             ClickableText(
                                 text = AnnotatedString("Términos y Condiciones"),
-                                onClick = { uriHandler.openUri("https://www.google.com") },
+                                onClick = { uriHandler.openUri("https://policies.google.com/terms?hl=es") },
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             )
                         }
                     }
-
                     if (errors.isNotEmpty()) {
                         Spacer(Modifier.height(6.dp))
                         errors.forEach {
@@ -193,24 +190,26 @@ fun RegisterApp(
                         onClick = {
                             val extra = mutableListOf<String>()
                             if (pass2 != pass) extra.add("Las contraseñas no coinciden")
-                            if (!aceptaTerminos) extra.add("Debes aceptar los Términos y Condiciones")
 
-                            val valid = RegistrosHelper.validarRegistro(
-                                nombre = nombre.trim(),
-                                correo = correo.trim(),
-                                password = pass,
-                                terminos = aceptaTerminos
-                            )
-
-                            val allErrors = valid.errors + extra
-                            if (valid.success && extra.isEmpty()) {
-                                errors = emptyList()
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("Cuenta creada con éxito")
+                            if (extra.isEmpty()) {
+                                val res = RegistrosHelper.guardarRegistro(
+                                    context = context,
+                                    nombre = nombre.trim(),
+                                    correo = correo.trim(),
+                                    password = pass,
+                                    terminos = aceptaTerminos
+                                )
+                                if (res.success) {
+                                    errors = emptyList()
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Cuenta creada con éxito")
+                                    }
+                                    onRegistered()
+                                } else {
+                                    errors = res.errors
                                 }
-                                onRegistered()
                             } else {
-                                errors = allErrors
+                                errors = extra
                             }
                         },
                         modifier = Modifier
@@ -218,7 +217,7 @@ fun RegisterApp(
                             .height(52.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = Color.White
                         )
                     ) { Text("Crear cuenta") }
 
@@ -231,7 +230,7 @@ fun RegisterApp(
                             .height(48.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onTertiary
+                            contentColor = Color.White
                         )
                     ) { Text("Ya tengo cuenta") }
                 }

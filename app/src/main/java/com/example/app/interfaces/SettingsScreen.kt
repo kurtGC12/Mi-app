@@ -13,8 +13,11 @@ import com.example.app.prefs.AppPrefs
 import com.example.app.prefs.AppearancePrefs
 import com.example.app.prefs.LanguagePrefs
 import kotlinx.coroutines.launch
+import android.app.Activity
+import androidx.compose.ui.graphics.Color
 import com.example.app.ui.theme.MaterialTheme
 import com.example.app.untils.LocalHelper
+import androidx.compose.ui.res.stringResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,12 +27,12 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val activity = context as? Activity
 
-    // Preferencias existentes
-    var dark by remember { mutableStateOf(AppPrefs.darkMode) }
+    val dark by AppearancePrefs.flowDarkMode(context).collectAsState(initial = false)
     var scale by remember { mutableStateOf(AppPrefs.fontScale) }
 
-    // Idioma actual desde DataStore
+
     val currentLang by LanguagePrefs.flowLanguage(context).collectAsState(initial = "es")
     var selectedLang by remember(currentLang) { mutableStateOf(currentLang) }
 
@@ -64,9 +67,9 @@ fun SettingsScreen(
                 }
                 Switch(
                     checked = dark,
-                    onCheckedChange = { enabled -> dark = enabled
-                        AppPrefs.darkMode = enabled
-                        scope.launch { AppearancePrefs.setDarkMode(context, enabled) }}
+                    onCheckedChange = { enabled ->
+                        scope.launch { AppearancePrefs.setDarkMode(context, enabled) }
+                    }
                 )
             }
 
@@ -84,8 +87,8 @@ fun SettingsScreen(
                             scope.launch { AppearancePrefs.setFontScale(context, scale) }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,)
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = Color.White,)
                     ) { Text("a-") }
 
                     Text("${(scale * 100).toInt()}%", style = MaterialTheme.typography.titleLarge)
@@ -97,15 +100,23 @@ fun SettingsScreen(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = Color.White
                         )
                     ) { Text("A+") }
 
-                    TextButton(onClick = {
-                        scale = 1.0f
-                        AppPrefs.fontScale = 1.0f
-                        scope.launch { AppearancePrefs.setFontScale(context, 1.0f) }
-                    }) { Text("Restablecer") }
+                    TextButton(
+                        onClick = {
+                            scale = 1.0f
+                            AppPrefs.fontScale = 1.0f
+                            scope.launch { AppearancePrefs.setFontScale(context, 1.0f) }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = Color.White //
+                        )
+                    ) {
+                        Text("Restablecer", color = Color.White)
+                    }
                 }
 
                 Spacer(Modifier.height(8.dp))
@@ -125,12 +136,13 @@ fun SettingsScreen(
                         Spacer(Modifier.height(4.dp))
                         Text("Ajusta a- / A+ para ver el efecto hasta que te resulte cómodo.",
                             style = MaterialTheme.typography.bodyMedium
+
                         )
                     }
                 }
             }
-
-            // Idioma
+// En otro momento (falta colocar los string de cada idioma )//
+          /*
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Idioma de la aplicación", style = MaterialTheme.typography.titleLarge)
                 Text(
@@ -143,8 +155,10 @@ fun SettingsScreen(
                     label = "Español",
                     onClick = {
                         selectedLang = "es"
-                        scope.launch { LanguagePrefs.setLanguage(context, "es")
+                        scope.launch {
+                            LanguagePrefs.setLanguage(context, "es")
                             LocalHelper.applyLanguage("es")
+                            activity?.recreate()
                         }
                     }
                 )
@@ -156,6 +170,7 @@ fun SettingsScreen(
                         scope.launch {
                             LanguagePrefs.setLanguage(context, "en")
                             LocalHelper.applyLanguage("en")
+                            activity?.recreate()
                         }
                     }
                 )
@@ -167,10 +182,11 @@ fun SettingsScreen(
                         scope.launch {
                             LanguagePrefs.setLanguage(context, "pt")
                             LocalHelper.applyLanguage("pt")
+                            activity?.recreate()
                         }
                     }
                 )
-            }
+            }*/
         }
     }
 }

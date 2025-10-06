@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,6 +27,7 @@ import com.example.app.untils.RegistrosHelper
 import com.airbnb.lottie.compose.*
 import com.example.app.R
 import com.example.app.ui.theme.MaterialTheme
+import androidx.compose.ui.platform.LocalUriHandler
 
 
 
@@ -38,6 +40,8 @@ fun LoginApp(
     onLoginSuccess: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+
+    val context = LocalContext.current
     var correo by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
@@ -55,7 +59,32 @@ fun LoginApp(
             modifier = Modifier.padding(padding).padding(30.dp).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(100.dp))
+            Spacer(Modifier.height(40.dp))
+
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "TextReader",
+                        style = MaterialTheme.typography.headlineLarge,
+                                color = Color.White
+                    )
+                }
+            }
+
             val composition by rememberLottieComposition(
                 LottieCompositionSpec.RawRes(R.raw.ee_gs1))
             val progress by animateLottieCompositionAsState(
@@ -111,7 +140,11 @@ fun LoginApp(
 
             Button(
                 onClick = {
-                    val res = RegistrosHelper.autenticar(correo.trim(), password)
+                    val res = RegistrosHelper.autenticar(
+                        context = context,
+                        correo = correo.trim(),
+                        password = password
+                    )
                     if (res.success) {
                         errors = emptyList()
                         onLoginSuccess() } else {
@@ -119,7 +152,7 @@ fun LoginApp(
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    contentColor = Color.White
                 ),
                 modifier = Modifier.fillMaxWidth().height(52.dp)
             ){
@@ -132,7 +165,7 @@ fun LoginApp(
             ){
                 TextButton(onClick =( onGoForgot),colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
+                    contentColor =  Color.White
                     ),
                     modifier = Modifier.weight(1f)
                 ) {
@@ -141,7 +174,7 @@ fun LoginApp(
                 TextButton(onClick = (onGoRegister),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
+                        contentColor = Color.White
                     ), modifier = Modifier.weight(1f)
                 ) {
                     Text("Crear cuenta")
@@ -150,40 +183,41 @@ fun LoginApp(
             }
             Spacer(Modifier.height(20.dp))
 
-            GoogleSignInButton {
-                // Por ahora solo un print:
-                println("Botón Google para iniciar sesion")
-            }
+            GoogleSignInButton(
+                url = "https://accounts.google.com/"
+            )
         }
     }
 }
 
 @Composable
 fun GoogleSignInButton(
-    onClick: () -> Unit
+    url: String,
+    modifier: Modifier = Modifier
 ) {
+    val uriHandler = LocalUriHandler.current
+
+
     OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(52.dp),
+        onClick = { uriHandler.openUri(url) },
+        modifier = modifier.fillMaxWidth().height(52.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.White,
             contentColor = Color.Black
         )
-
     ) {
         Icon(
             painter = painterResource(id = R.drawable.google),
             contentDescription = "Google",
             modifier = Modifier.size(20.dp),
-                    tint = Color.Unspecified
+            tint = Color.Unspecified
         )
+        Spacer(Modifier.width(8.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-
-            Spacer(Modifier.width(8.dp))
             Text("Iniciar con Google")
         }
     }

@@ -92,13 +92,8 @@ fun HomeApp(
                 ) { scope.launch { drawerState.close() } }
 
 
-
                 Spacer(Modifier.height(8.dp))
-                TextButton(
-                    onClick = onLogout,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                ) { Text("Cerrar sesión") }
-                Spacer(Modifier.height(12.dp))
+
             }
         }
     ) {

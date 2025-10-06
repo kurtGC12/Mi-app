@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.kapt")
+
 }
 
 android {
@@ -61,6 +63,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.room:room-runtime:2.4.0")
+    implementation("androidx.room:room-ktx:2.4.0")
+    kapt("androidx.room:room-compiler:2.4.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
