@@ -15,6 +15,8 @@ val Context.dataStore by preferencesDataStore(name = "settings")
 object AppearancePrefs {
     private val KEY_DARK = booleanPreferencesKey("dark_mode")
     private val KEY_FONT = floatPreferencesKey("font_scale")
+    private val KEY_NOMBRE = stringPreferencesKey("user_nombre")
+    private val KEY_CORREO = stringPreferencesKey("user_correo")
 
     fun flowDarkMode(context: Context): Flow<Boolean> =
         context.dataStore.data.map { it[KEY_DARK] ?: false }
@@ -31,4 +33,20 @@ object AppearancePrefs {
         context.dataStore.edit { it[KEY_FONT] = safe }
 
     }
+    suspend fun setUsuario(context: Context, nombre: String, correo: String) {
+        context.dataStore.edit {
+            it[KEY_NOMBRE] = nombre
+            it[KEY_CORREO] = correo
+        }
+    }
+    fun flowNombre(context: Context): Flow<String> =
+        context.dataStore.data.map { it[KEY_NOMBRE] ?: "" }
+
+    fun flowCorreo(context: Context): Flow<String> =
+        context.dataStore.data.map { it[KEY_CORREO] ?: "" }
+
+    suspend fun limpiarUsuario(context: Context) {
+        context.dataStore.edit { it.clear() }
+    }
+
 }

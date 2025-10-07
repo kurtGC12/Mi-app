@@ -1,11 +1,11 @@
 package com.example.app.interfaces
 
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,30 +17,49 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Surface
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.AddLocation
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import com.example.app.ui.theme.MaterialTheme
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import com.example.app.R
+import com.example.app.prefs.AppearancePrefs
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeApp(
     onLogout: () -> Unit,
-    onSettings: () -> Unit
+    onSettings: () -> Unit,
+    onSpeak: () -> Unit,
+    onText: () -> Unit,
+    onGeo: () -> Unit,
+    onHome: () -> Unit
 ) {
+    val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val nombre by AppearancePrefs.flowNombre(context).collectAsState(initial = "")
+    val correo by AppearancePrefs.flowCorreo(context).collectAsState(initial = "")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -54,46 +73,50 @@ fun HomeApp(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Avatar",
                         modifier = Modifier
                             .size(48.dp)
-                            .clip(CircleShape)
+                            .clip(CircleShape),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 Column(Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
-                    Text("Violet Norman", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text("bayer_martin@yahoo.com", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = nombre ,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = correo,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(12.dp))
                 }
                 Divider()
 
                 DrawerItem(
                     icon = { Icon(Icons.Default.Home, null) },
-                    label = "Home",
+                    label = "Principal",
                     selected = true
-                ) { scope.launch { drawerState.close() } }
+                ) { scope.launch { drawerState.close() }
+                    onHome() }
 
                 DrawerItem(
-                    icon = { Icon(Icons.Default.Star, null) },
-                    label = "New collections"
-                ) { scope.launch { drawerState.close() } }
-
-                DrawerItem(
-                    icon = { Icon(Icons.Default.Edit, null) },
-                    label = "Editor’s Picks"
-                ) { scope.launch { drawerState.close() } }
-
-
-
-                DrawerItem(
-                    icon = { Icon(Icons.Default.Notifications, null) },
-                    label = "Notifications"
-                ) { scope.launch { drawerState.close() } }
+                    icon = { Icon(Icons.Default.Place, null) },
+                    label = "Buscar Dispositivo"
+                ) { scope.launch { drawerState.close() }
+                    onGeo()}
 
 
                 Spacer(Modifier.height(8.dp))
-
+                TextButton(
+                    onClick = onLogout,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                ) { Text("Cerrar sesión") }
+                Spacer(Modifier.height(12.dp))
             }
         }
     ) {
@@ -116,8 +139,30 @@ fun HomeApp(
             ) {
                 Text("TextReader", style = MaterialTheme.typography.headlineMedium)
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = onLogout) { Text("Cerrar sesión") }
+
+                MenuItemCard(
+                    title = "Reconocimiento de voz ",
+                    subtitle = "Habla para que TextReader lo reciba y lo lea ",
+                    icon = Icons.Outlined.Mic,
+                    onClick = onSpeak
+                )
+                Spacer(Modifier.height(24.dp))
+                MenuItemCard(
+                    title = "Escribir o Pegar texto ",
+                    subtitle = "Introduce o pega un texto para escuchar ",
+                    icon = Icons.Outlined.MenuBook,
+                    onClick =  onText
+                )
+                Spacer(Modifier.height(24.dp))
+                MenuItemCard(
+                    title = "Escanear Documentos ",
+                    subtitle = "PROXIMAMENTE ",
+                    icon = Icons.Default.CameraAlt,
+                    onClick = onSpeak
+                )
+
             }
+
         }
     }
 }
@@ -138,6 +183,52 @@ private fun DrawerItem(
     )
 }
 
+@Composable
+private fun MenuItemCard(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    val cardBg = Color(0xFF213A6B)
+    val iconBg = Color(0xFF273EB6)
+    val iconTint = Color(0xFFFFFFFF)
+
+    val interaction = remember { MutableInteractionSource() }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(cardBg)
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick
+            )
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(iconBg),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = iconTint)
+        }
+        Spacer(Modifier.width(14.dp))
+        Column {
+            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Color.White)
+            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color.LightGray)
+        }
+    }
+}
+
+
+
 @Preview(
     name = "Home ",
     showBackground = true,
@@ -148,7 +239,7 @@ private fun DrawerItem(
 fun HomeAppPreview() {
     MaterialTheme {
         Surface {
-            HomeApp(onLogout = { }, onSettings = { })
+            HomeApp(onLogout = { }, onSettings = { }, onSpeak ={ }, onText = {}, onGeo = {}, onHome = {})
         }
     }
 }

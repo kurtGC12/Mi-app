@@ -51,26 +51,12 @@ class MainActivity : ComponentActivity() {
 
             MaterialTheme(darkTheme = isDark) {
                 AppNav()
-                SpeechRecognitionApp()
             }
         }
     }
 }
 
-@Composable
-fun SpeechRecognitionApp() {
-    val context = LocalContext.current
-    val speechText = remember { mutableStateOf("presione el botón y hable") }
-    val recognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
 
-    val recognizerIntent = remember {
-        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
-
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

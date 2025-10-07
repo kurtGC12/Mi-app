@@ -60,7 +60,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("Modo nocturno", style = MaterialTheme.typography.titleLarge)
+                    Text("Modo Oscuro", style = MaterialTheme.typography.titleLarge)
                     Text(
                         "Mejora legibilidad para baja visión y ambientes con poca luz.",
                         style = MaterialTheme.typography.bodyMedium)

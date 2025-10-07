@@ -49,12 +49,34 @@ fun AppNav() {
                 },
                 onSettings = {
                     navController.navigate(Routes.SETTINGS) { launchSingleTop = true }
-                }
+                },
+                onSpeak = { navController.navigate(Routes.SPEAK)} ,
+                onText = { navController.navigate(Routes.TEXT) },
+                onGeo = { navController.navigate(Routes.GEO) },
+                onHome = { navController.navigate(Routes.HOME) }
             )
         }
-
         composable(Routes.SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })
         }
+        composable(Routes.SPEAK) {
+            SpeakScreen(
+                onBack = { navController.popBackStack() },
+                onSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } }
+            )
+        }
+        composable(Routes.TEXT) {
+            TextScreen(
+                onBack = { navController.popBackStack() },
+                onSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } }
+            )
+        }
+        composable (Routes.GEO) {
+            GeoScreen(
+                onBack = { navController.popBackStack() },
+                onSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } }
+            )
+        }
+
     }
 }

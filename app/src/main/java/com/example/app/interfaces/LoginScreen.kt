@@ -1,8 +1,5 @@
 package com.example.app.interfaces
 
-
-
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,7 +25,9 @@ import com.airbnb.lottie.compose.*
 import com.example.app.R
 import com.example.app.ui.theme.MaterialTheme
 import androidx.compose.ui.platform.LocalUriHandler
-
+import com.example.app.data.UserDao
+import com.example.app.prefs.AppearancePrefs
+import kotlinx.coroutines.launch
 
 
 
@@ -42,6 +41,7 @@ fun LoginApp(
 ) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var correo by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
@@ -146,8 +146,17 @@ fun LoginApp(
                         password = password
                     )
                     if (res.success) {
-                        errors = emptyList()
-                        onLoginSuccess() } else {
+                        val dao = UserDao(context)
+                        val usuario = dao.getAll().find {
+                            it.correo.equals(correo.trim(), ignoreCase = true) && it.contrasena == password
+                        }
+                        if (usuario != null) {
+                            scope.launch{
+                                AppearancePrefs.setUsuario(context, usuario.nombre, usuario.correo)
+                            }
+                        }
+                        onLoginSuccess() }
+                    else {
                         errors = res.errors }
                 },
                 colors = ButtonDefaults.buttonColors(
