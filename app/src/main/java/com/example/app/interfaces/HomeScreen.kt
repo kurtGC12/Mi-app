@@ -158,7 +158,7 @@ fun HomeApp(
                     title = "Escanear Documentos ",
                     subtitle = "PROXIMAMENTE ",
                     icon = Icons.Default.CameraAlt,
-                    onClick = onSpeak
+                    onClick = onHome
                 )
 
             }

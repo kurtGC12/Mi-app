@@ -19,8 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import android.Manifest
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,14 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun SpeakScreen(
     onSettings: () -> Unit,
-    onBack: () -> Unit,
+    onBack: () -> Unit
 
 
 ) {
 
     val context = LocalContext.current
-    var speechText by remember { mutableStateOf("presione el botón y hable") }
     val speechRecognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
+    var speechText by remember { mutableStateOf("presione el botón y hable") }
+    var isListening by remember { mutableStateOf(false) }
+
 
     val recognizerIntent = remember {
         Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -47,6 +52,9 @@ fun SpeakScreen(
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Habla ahora…")
         }
     }
 
@@ -60,9 +68,25 @@ fun SpeakScreen(
             Toast.makeText(context, "Permiso denegado para el microfono", Toast.LENGTH_SHORT).show()
         }
     }
+    fun startOrRequestPermission() {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.RECORD_AUDIO
+        ) == PERMISSION_GRANTED
+
+        if (hasPermission) {
+            try {
+                speechRecognizer.startListening(recognizerIntent)
+            } catch (e: Exception) {
+                speechText = "No se pudo iniciar el reconocimiento"
+            }
+        } else {
+            permissionToRecordAudio.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
     val recognizerListener = object : RecognitionListener {
         override fun onBeginningOfSpeech() {
             speechText = "Escuchando..........."
+            isListening = true
         }
 
         override fun onBufferReceived(p0: ByteArray?) {
@@ -71,10 +95,12 @@ fun SpeakScreen(
 
         override fun onEndOfSpeech() {
             speechText = "Procesando..........."
+            isListening = false
         }
 
         override fun onError(p0: Int) {
             speechText = "Error al reconocer la voz"
+            isListening = false
         }
 
         override fun onEvent(p0: Int, p1: Bundle?) {
@@ -92,6 +118,7 @@ fun SpeakScreen(
         override fun onResults(p0: Bundle?) {
             val matches = p0?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
             speechText = matches?.firstOrNull() ?: "No se pudo reconocer la voz"
+            isListening = false
         }
 
         override fun onRmsChanged(rmsdB: Float) {
@@ -100,6 +127,15 @@ fun SpeakScreen(
     }
     speechRecognizer.setRecognitionListener(recognizerListener)
 
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                speechRecognizer.stopListening()
+                speechRecognizer.cancel()
+            } catch (_: Exception) {}
+            speechRecognizer.destroy()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -123,21 +159,12 @@ fun SpeakScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
 
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.medium,
-                    tonalElevation = 2.dp,
-                    shadowElevation = 2.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp)
-                ) {
                     Text(
                         text = speechText,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )
-                }
+
 
 
                 Button(
@@ -150,7 +177,7 @@ fun SpeakScreen(
                         .widthIn(min = 220.dp)
                         .height(56.dp)
                 ) {
-                    Text("Presionar y hablar")
+                    Text(if (isListening) "Escuchando…" else "Presionar y hablar")
                 }
             }
         }
